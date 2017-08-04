@@ -453,7 +453,7 @@ foreach ($all_projects as $row )
  		$objWorkSheet->setCellValue('D'.'1','Duration');
  		$objWorkSheet->setCellValue('E'.'1','User ');
  		$objWorkSheet->setCellValue('F'.'1','Gruppe');
- 		$objWorkSheet->setCellValue('G'.'1','Cost');
+ 		$objWorkSheet->setCellValue('G'.'1','Preis');
  		
  		$objWorkSheet->getColumnDimension('A')->setAutoSize(false);
  		$objWorkSheet->getColumnDimension('A')->setWidth("25");
@@ -488,7 +488,12 @@ foreach ($all_projects as $row )
  			$u=$u+1;
  		}
  		
+ 		
+ 	  
+ 		
  	}
+ 	
+ 
  	
  }
  
@@ -496,8 +501,7 @@ foreach ($all_projects as $row )
  	$objWorkSheet->setTitle('user with out group');
  	
  	
- 	
- 	$all_benuzer_query = mysqli_query($mysql, "select u.fname as first, u.lname as last  ,g.name ,re.name as Resource ,i.start_date as Begin, i.end_date as End,time_to_sec(timediff(i.end_date, i.start_date)) / 3600 as Duration, v.attribute_value as Cost from reservation_instances i
+ 	$all_benuzer_query = mysqli_query($mysql, "select u.fname as first, u.lname as last ,re.name as Resource ,i.start_date as Begin, i.end_date as End,time_to_sec(timediff(i.end_date, i.start_date)) / 3600 as Duration, v.attribute_value as Cost, s.title, s.description as des from reservation_instances i
 									                LEFT JOIN reservation_series s    ON i.series_id = s.series_id
 													LEFT JOIN reservation_statuses st    ON s.status_id = st.status_id
 									                LEFT JOIN reservation_resources r ON r.series_id = i.series_id
@@ -506,15 +510,21 @@ foreach ($all_projects as $row )
 									                left join user_groups ug          on u.user_id = ug.user_id
 									                left join groups g                on g.group_id = ug.group_id
 													left join custom_attribute_values v on v.entity_id = re.resource_id
-									                where g.group_id  is null and (i.start_date>='".date("y-m-d", $date_start)."' and i.end_date<='".date("y-m-d", $date_end)."') and s.status_id= 1
+									                where ug.group_id is null and  (i.start_date>='".date("y-m-d", $date_start)."' and i.end_date<='".date("y-m-d", $date_end)."') and s.status_id= 1
 	    											order by  i.start_date");
  	$objWorkSheet->setCellValue('A'.'1','Resource');
  	$objWorkSheet->setCellValue('B'.'1','Begin');
  	$objWorkSheet->setCellValue('C'.'1','End');
- 	$objWorkSheet->setCellValue('D'.'1','Duration');
- 	$objWorkSheet->setCellValue('E'.'1','User ');
- 
- 	$objWorkSheet->setCellValue('G'.'1','Cost');
+ 	
+ 	$objWorkSheet->setCellValue('D'.'1','Last Name');
+ 	$objWorkSheet->setCellValue('E'.'1',' First Name');
+ 	
+ 	$objWorkSheet->setCellValue('F'.'1','Duration');
+ 	
+ 	$objWorkSheet->setCellValue('G'.'1','Preis');
+ 	
+ 	$objWorkSheet->setCellValue('H'.'1','title ');
+ 	$objWorkSheet->setCellValue('I'.'1','desc');
  	
  	$objWorkSheet->getColumnDimension('A')->setAutoSize(false);
  	$objWorkSheet->getColumnDimension('A')->setWidth("25");
@@ -526,39 +536,45 @@ foreach ($all_projects as $row )
  	$objWorkSheet->getColumnDimension('C')->setWidth("25");
  	
  	$objWorkSheet->getColumnDimension('E')->setAutoSize(false);
- 	$objWorkSheet->getColumnDimension('E')->setWidth("25");
+ 	$objWorkSheet->getColumnDimension('E')->setWidth("20");
  	
  	$objWorkSheet->getColumnDimension('F')->setAutoSize(false);
  	$objWorkSheet->getColumnDimension('F')->setWidth("20");
+ 	
+ 	$objWorkSheet->getColumnDimension('H')->setAutoSize(false);
+ 	$objWorkSheet->getColumnDimension('H')->setWidth("20");
+ 	
+ 	$objWorkSheet->getColumnDimension('I')->setAutoSize(false);
+ 	$objWorkSheet->getColumnDimension('I')->setWidth("20");
  	
  	$u=2;
  	
  	while ($row1 = $all_benuzer_query->fetch_assoc())
  	
  	{
- 		$fName= $row1['last'].",".$row1['first'];
+ 		#$fName= $row1['last'].",".$row1['first'];
  		
  		$objWorkSheet->setCellValue('A'.$u,$row1['Resource']);
  		$objWorkSheet->setCellValue('B'.$u,$row1['Begin']);
  		$objWorkSheet->setCellValue('C'.$u,$row1['End']);
- 		$objWorkSheet->setCellValue('D'.$u,(double)$row1['Duration']);
- 		$objWorkSheet->setCellValue('E'.$u,utf8_encode($fName));
+ 		
+ 		$objWorkSheet->setCellValue('D'.$u,utf8_encode($row1['last']));
+ 		$objWorkSheet->setCellValue('E'.$u,utf8_encode($row1['first']));
+ 		
+ 		$objWorkSheet->setCellValue('F'.$u,(double)$row1['Duration']);
+ 	
  		$objWorkSheet->setCellValue('G'.$u,(double)$row1['Cost']);
+ 		
+ 		$objWorkSheet->setCellValue('H'.$u,utf8_encode($row1['title']));
+ 		$objWorkSheet->setCellValue('I'.$u,utf8_encode($row1['des']));
  		
  		$u=$u+1;
  	}
  	
  	
- 	
- 	
- 	
- 	
- 	
- 	
- 	
- 	
- 	
  }
+ 
+ 
 
 # end if 
 
